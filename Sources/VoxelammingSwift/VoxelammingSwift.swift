@@ -37,6 +37,8 @@ public class VoxelammingSwift: NSObject {
     var buildInterval = 0.01
     var isFraming = false
     var frameId: Int = 0
+    var name: String = "" // アプリ内ののコードエディタ用
+    var date: String = "" // アプリ内ののコードエディタ用
     var rotationStyles: [String: Any] = [:] // 回転の制御（送信しない）
 
     // 追加部分: アイドルタイマーとタイムアウト設定
@@ -441,6 +443,15 @@ public class VoxelammingSwift: NSObject {
         idleTimer?.cancel()
         idleTimer = nil
         print("WebSocket connection closed due to inactivity.")
+    }
+    
+    // アプリ内ののコードエディタからデータ送信するときに使用する
+    public func setDataName(name: String) {
+        let date = Date()
+        let dateFormatter = ISO8601DateFormatter()
+        let dateString = dateFormatter.string(from: date)
+        self.name = name
+        self.date = dateString
     }
 
     // データを送信する関数
