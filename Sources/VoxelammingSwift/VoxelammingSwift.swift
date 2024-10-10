@@ -4,7 +4,7 @@
 import Foundation
 
 @available(iOS 15.0, macOS 12.0, *)
-class VoxelammingSwift: NSObject {
+public class VoxelammingSwift: NSObject {
     let url = URL(string: "wss://websocket.voxelamming.com")!
     var webSocketTask: URLSessionWebSocketTask?
     let textureNames = ["grass", "stone", "dirt", "planks", "bricks"]
