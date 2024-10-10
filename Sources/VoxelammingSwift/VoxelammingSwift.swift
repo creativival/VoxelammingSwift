@@ -43,7 +43,7 @@ public class VoxelammingSwift: NSObject {
     var idleTimer: DispatchSourceTimer?
     let idleTimeout: TimeInterval = 3.0 // 3秒間アイドル状態が続いたら接続を閉じる
 
-    public init(roomName: String) {
+    public init(roomName: String = "") {
         self.roomName = roomName
         super.init()
     }
