@@ -68,6 +68,7 @@ func exampleUsage() async throws {
     voxelamming.createBox(10, 5, -2, r: 1, g: 0, b: 0) // Place a red voxel
     try await voxelamming.sendData(name: "MyFirstVoxel")
 }
+```
 
 ### 3. Run Your Code
 
