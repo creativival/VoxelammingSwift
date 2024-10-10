@@ -13,33 +13,34 @@ public class VoxelammingSwift: NSObject {
     var roomName = ""
     var isAllowedMatrix: Int = 0
     var savedMatrices: [[Double]] = []
-    var nodeTransform: [Double] = [0, 0, 0, 0, 0, 0]
     var matrixTransform: [Double] = [0, 0, 0, 0, 0, 0]
-    var frameTransforms: [[Double]] = []
-    var globalAnimation: [Double] = [0, 0, 0, 0, 0, 0, 1, 0]
-    var animation: [Double] = [0, 0, 0, 0, 0, 0, 1, 0]
-    var boxes = [[Double]]()
-    var frames = [[Double]]()
-    var sentences = [[String]]()
-    var lights = [[Double]]()
-    var commands = [String]()
-    var models = [[String]]()
-    var modelMoves = [[String]]()
-    var sprites = [[String]]()
-    var spriteMoves = [[String]]()
-    var gameScore = [[Double]]()
-    var gameScreen = [[Double]]() // width, height, angle=90, red=1, green=0, blue=1, alpha=0.3
-    var size: Double = 1.0
-    var shape: String = "box"
-    var isMetallic: Int = 0
-    var roughness: Double = 0.5
-    var isAllowedFloat: Int = 0
-    var buildInterval = 0.01
     var isFraming = false
     var frameId: Int = 0
-    var name: String = "" // アプリ内ののコードエディタ用
-    var date: String = "" // アプリ内ののコードエディタ用
     var rotationStyles: [String: Any] = [:] // 回転の制御（送信しない）
+    // 送信データ
+    public var nodeTransform: [Double] = [0, 0, 0, 0, 0, 0]
+    public var frameTransforms: [[Double]] = []
+    public var globalAnimation: [Double] = [0, 0, 0, 0, 0, 0, 1, 0]
+    public var animation: [Double] = [0, 0, 0, 0, 0, 0, 1, 0]
+    public var boxes = [[Double]]()
+    public var frames = [[Double]]()
+    public var sentences = [[String]]()
+    public var lights = [[Double]]()
+    public var commands = [String]()
+    public var models = [[String]]()
+    public var modelMoves = [[String]]()
+    public var sprites = [[String]]()
+    public var spriteMoves = [[String]]()
+    public var gameScore = [[Double]]()
+    public var gameScreen = [[Double]]() // width, height, angle=90, red=1, green=0, blue=1, alpha=0.3
+    public var size: Double = 1.0
+    public var shape: String = "box"
+    public var buildInterval = 0.01
+    public var isMetallic: Int = 0
+    public var roughness: Double = 0.5
+    public var isAllowedFloat: Int = 0
+    public var name: String = "" // アプリ内ののコードエディタ用
+    public var date: String = "" // アプリ内ののコードエディタ用
 
     // 追加部分: アイドルタイマーとタイムアウト設定
     var idleTimer: DispatchSourceTimer?
@@ -53,8 +54,11 @@ public class VoxelammingSwift: NSObject {
     public func clearData() {
         isAllowedMatrix = 0
         savedMatrices = []
-        nodeTransform = [0, 0, 0, 0, 0, 0]
         matrixTransform = [0, 0, 0, 0, 0, 0]
+        isFraming = false
+        frameId = 0
+        rotationStyles = [:]
+        nodeTransform = [0, 0, 0, 0, 0, 0]
         frameTransforms = []
         globalAnimation = [0, 0, 0, 0, 0, 0, 1, 0]
         animation = [0, 0, 0, 0, 0, 0, 1, 0]
@@ -69,13 +73,12 @@ public class VoxelammingSwift: NSObject {
         spriteMoves = []
         size = 1.0
         shape = "box"
+        buildInterval = 0.01
         isMetallic = 0
         roughness = 0.5
         isAllowedFloat = 0
-        buildInterval = 0.01
-        isFraming = false
-        frameId = 0
-        rotationStyles = [:]
+        name = ""
+        date = ""
     }
 
     public func setFrameFPS(_ fps: Int = 2) {
