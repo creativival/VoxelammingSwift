@@ -43,12 +43,12 @@ public class VoxelammingSwift: NSObject {
     var idleTimer: DispatchSourceTimer?
     let idleTimeout: TimeInterval = 3.0 // 3秒間アイドル状態が続いたら接続を閉じる
 
-    init(roomName: String) {
+    public init(roomName: String) {
         self.roomName = roomName
         super.init()
     }
 
-    func clearData() {
+    public func clearData() {
         isAllowedMatrix = 0
         savedMatrices = []
         nodeTransform = [0, 0, 0, 0, 0, 0]
@@ -76,34 +76,34 @@ public class VoxelammingSwift: NSObject {
         rotationStyles = [:]
     }
 
-    func setFrameFPS(_ fps: Int = 2) {
+    public func setFrameFPS(_ fps: Int = 2) {
         commands.append("fps \(fps)")
     }
 
-    func setFrameRepeats(_ repeats: Int = 10) {
+    public func setFrameRepeats(_ repeats: Int = 10) {
         commands.append("repeats \(repeats)")
     }
 
-    func frameIn() {
+    public func frameIn() {
         isFraming = true
     }
 
-    func frameOut() {
+    public func frameOut() {
         isFraming = false
         frameId += 1
     }
 
-    func pushMatrix() {
+    public func pushMatrix() {
         self.isAllowedMatrix += 1
         self.savedMatrices.append(matrixTransform)
     }
 
-    func popMatrix() {
+    public func popMatrix() {
         self.isAllowedMatrix -= 1
         matrixTransform = self.savedMatrices.popLast()!
     }
 
-    func transform(_ x: Double, _ y: Double, _ z: Double, pitch: Double = 0, yaw: Double = 0, roll: Double = 0) {
+    public func transform(_ x: Double, _ y: Double, _ z: Double, pitch: Double = 0, yaw: Double = 0, roll: Double = 0) {
         if self.isAllowedMatrix > 0 {
             // Retrieve the saved matrix
             let matrix = self.savedMatrices.last!
@@ -156,7 +156,7 @@ public class VoxelammingSwift: NSObject {
         }
     }
 
-    func createBox(_ x: Double, _ y: Double, _  z: Double, r: Double = 1, g: Double = 1, b: Double = 1, alpha: Double = 1, texture: String = "") {
+    public func createBox(_ x: Double, _ y: Double, _  z: Double, r: Double = 1, g: Double = 1, b: Double = 1, alpha: Double = 1, texture: String = "") {
         var x = x
         var y = y
         var z = z
@@ -212,7 +212,7 @@ public class VoxelammingSwift: NSObject {
         }
     }
 
-    func removeBox(_ x: Double, _ y: Double, _ z: Double) {
+    public func removeBox(_ x: Double, _ y: Double, _ z: Double) {
         let roundNumList = roundNumbers(numList: [x, y, z])
         let roundX = roundNumList[0]
         let roundY = roundNumList[1]
@@ -229,7 +229,7 @@ public class VoxelammingSwift: NSObject {
         }
     }
 
-    func animateGlobal(_ x: Double, _ y: Double, _  z: Double, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1, interval: Double = 10) {
+    public func animateGlobal(_ x: Double, _ y: Double, _  z: Double, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1, interval: Double = 10) {
         let roundNumList = roundNumbers(numList: [x, y, z])
         let roundX = roundNumList[0]
         let roundY = roundNumList[1]
@@ -237,7 +237,7 @@ public class VoxelammingSwift: NSObject {
         globalAnimation = [roundX, roundY, roundZ, pitch, yaw, roll, scale, interval]
     }
 
-    func animate(_ x: Double, _ y: Double, _  z: Double, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1, interval: Double = 10) {
+    public func animate(_ x: Double, _ y: Double, _  z: Double, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1, interval: Double = 10) {
         let roundNumList = roundTwoDecimals(numList: [x, y, z, pitch, yaw, roll, scale, interval])
         let roundX = roundNumList[0]
         let roundY = roundNumList[1]
@@ -250,15 +250,15 @@ public class VoxelammingSwift: NSObject {
         animation = [roundX, roundY, roundZ, roundPitch, roundYaw, roundRoll, roundScale, roundInterval]
     }
 
-    func setBoxSize(_ boxSize: Double) {
+    public func setBoxSize(_ boxSize: Double) {
         size = boxSize
     }
 
-    func setBuildInterval(_ interval: Double) {
+    public func setBuildInterval(_ interval: Double) {
         buildInterval = interval
     }
 
-    func writeSentence(_ string_sentence: String, _ x: Double, _ y: Double, _  z: Double, r: Double = 0, g: Double = 0, b: Double = 0, alpha: Double = 1, fontSize: Int = 16, isFixedWidth: Bool = false) {
+    public func writeSentence(_ string_sentence: String, _ x: Double, _ y: Double, _  z: Double, r: Double = 0, g: Double = 0, b: Double = 0, alpha: Double = 1, fontSize: Int = 16, isFixedWidth: Bool = false) {
         let roundNumList = roundNumbers(numList: [x, y, z])
         let roundX = roundNumList[0]
         let roundY = roundNumList[1]
@@ -283,7 +283,7 @@ public class VoxelammingSwift: NSObject {
         sentences.append([string_sentence, stringX, stringY, stringZ, stringR, stringG, stringB, stringAlpha, stringFontSize, stringIsFixedWidth])
     }
 
-    func setLight(_ x: Double, _ y: Double, _  z: Double, r: Double = 0, g: Double = 0, b: Double = 0, alpha: Double = 1, intensity: Double = 1000, interval: Double = 1, lightType: String = "point") {
+    public func setLight(_ x: Double, _ y: Double, _  z: Double, r: Double = 0, g: Double = 0, b: Double = 0, alpha: Double = 1, intensity: Double = 1000, interval: Double = 1, lightType: String = "point") {
         let roundNumList = roundNumbers(numList: [x, y, z])
         let roundX = roundNumList[0]
         let roundY = roundNumList[1]
@@ -307,7 +307,7 @@ public class VoxelammingSwift: NSObject {
         lights.append([roundX, roundY, roundZ, roundR, roundG, roundB, roundAlpha, intensity, interval, doubleLightType])
     }
 
-    func setCommand(_ command: String) {
+    public func setCommand(_ command: String) {
         commands.append(command)
 
         if command == "float" {
@@ -315,7 +315,7 @@ public class VoxelammingSwift: NSObject {
         }
     }
 
-    func drawLine(_ x1: Double, _ y1: Double, _ z1: Double, _ x2: Double, _ y2: Double, _ z2: Double, r: Double = 1, g: Double = 1, b: Double = 1, alpha: Double = 1) {
+    public func drawLine(_ x1: Double, _ y1: Double, _ z1: Double, _ x2: Double, _ y2: Double, _ z2: Double, r: Double = 1, g: Double = 1, b: Double = 1, alpha: Double = 1) {
         let x1 = floor(x1)
         let y1 = floor(y1)
         let z1 = floor(z1)
@@ -376,7 +376,7 @@ public class VoxelammingSwift: NSObject {
         }
     }
 
-    func createModel(modelName: String, x: Double = 0, y: Double = 0, z: Double = 0, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1, entityName: String = "") {
+    public func createModel(modelName: String, x: Double = 0, y: Double = 0, z: Double = 0, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1, entityName: String = "") {
         if modelNames.contains(modelName) {
             print("Find model name: \(modelName)")
             let roundedValues = roundTwoDecimals(numList: [x, y, z, pitch, yaw, roll, scale])
@@ -389,7 +389,7 @@ public class VoxelammingSwift: NSObject {
         }
     }
 
-    func moveModel(entityName: String, x: Double = 0, y: Double = 0, z: Double = 0, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1) {
+    public func moveModel(entityName: String, x: Double = 0, y: Double = 0, z: Double = 0, pitch: Double = 0, yaw: Double = 0, roll: Double = 0, scale: Double = 1) {
         let roundedValues = roundTwoDecimals(numList: [x, y, z, pitch, yaw, roll, scale])
         let stringValues = roundedValues.map { String($0) }
 
@@ -397,18 +397,18 @@ public class VoxelammingSwift: NSObject {
         modelMoves.append(moveEntry)
     }
 
-    func changeShape(_ shape: String) {
+    public func changeShape(_ shape: String) {
         self.shape = shape
     }
 
-    func changeMaterial(isMetallic: Bool = false, roughness: Double = 0.5) {
+    public func changeMaterial(isMetallic: Bool = false, roughness: Double = 0.5) {
         self.isMetallic = isMetallic ? 1 : 0
         self.roughness = roughness
     }
 
 
     // 接続を確立または再利用するための関数
-    func ensureConnection() async throws {
+    public func ensureConnection() async throws {
         if webSocketTask == nil || webSocketTask?.state != .running || webSocketTask?.state == .completed || webSocketTask?.state == .canceling {
             // 新しい接続を確立
             webSocketTask = URLSession.shared.webSocketTask(with: url)
@@ -424,7 +424,7 @@ public class VoxelammingSwift: NSObject {
     }
 
     // アイドルタイマーをリセットする関数
-    func resetIdleTimer() {
+    public func resetIdleTimer() {
         idleTimer?.cancel()
         idleTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
         idleTimer?.schedule(deadline: .now() + idleTimeout)
@@ -435,7 +435,7 @@ public class VoxelammingSwift: NSObject {
     }
 
     // 接続を閉じる関数
-    func closeConnection() {
+    public func closeConnection() {
         webSocketTask?.cancel(with: .goingAway, reason: nil)
         webSocketTask = nil
         idleTimer?.cancel()
@@ -444,7 +444,7 @@ public class VoxelammingSwift: NSObject {
     }
 
     // データを送信する関数
-    func sendData(name: String = "") async throws {
+    public func sendData(name: String = "") async throws {
         try await ensureConnection()
 
         let date = Date()
