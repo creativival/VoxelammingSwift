@@ -526,7 +526,7 @@ public class VoxelammingSwift: NSObject {
     }
 
     // アプリ内ののコードエディタからデータ送信するときに使用する
-    public func setDataName(name: String) {
+    public func setDataName(name: String = "") {
         let date = Date()
         let dateFormatter = ISO8601DateFormatter()
         let dateString = dateFormatter.string(from: date)
