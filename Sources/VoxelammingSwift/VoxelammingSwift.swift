@@ -533,10 +533,22 @@ public class VoxelammingSwift: NSObject {
         self.name = name
         self.date = dateString
     }
+    
+    // sleep seconds function
+    public func sleepSeconds(_ seconds: Double) async {
+        // 秒をナノ秒に変換（1秒 = 1,000,000,000ナノ秒）
+        let nanoseconds = UInt64(seconds * 1_000_000_000)
+        try? await Task.sleep(nanoseconds: nanoseconds)
+    }
 
     // データを送信する関数
-    public func sendData(name: String = "") async throws {
-        try await ensureConnection()
+    public func sendData(name: String = "") async {
+        do {
+            try await ensureConnection() // try awaitでエラーハンドリング
+        } catch {
+            print("Error ensuring connection: \(error)")
+            return
+        }
 
         let date = Date()
         let dateFormatter = ISO8601DateFormatter()
@@ -567,21 +579,24 @@ public class VoxelammingSwift: NSObject {
             "date": dateString
         ] as [String : Any]
 
-        let jsonData = try JSONSerialization.data(withJSONObject: dataDict, options: [])
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
-            print("Failed to convert data to string")
-            return
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dataDict, options: [])
+            guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+                print("Failed to convert data to string")
+                return
+            }
+
+            if let webSocketTask = webSocketTask {
+                try await webSocketTask.send(.string(jsonString)) // try awaitでエラーハンドリング
+                print("Sent message: \(jsonString)")
+            } else {
+                print("WebSocket connection is not available.")
+            }
+        } catch {
+            print("Error sending data: \(error)")
         }
 
-        if let webSocketTask = webSocketTask {
-            try await webSocketTask.send(.string(jsonString))
-            print("Sent message: \(jsonString)")
-        } else {
-            print("WebSocket connection is not available.")
-        }
-
-        // アイドルタイマーをリセット
-        resetIdleTimer()
+        resetIdleTimer() // アイドルタイマーをリセット
     }
 
     // 接続を確立または再利用するための関数
