@@ -47,6 +47,7 @@ public class VoxelammingSwift: NSObject {
     public var isMetallic: Int = 0
     public var roughness: Double = 0.5
     public var isAllowedFloat: Int = 0
+    public var name: String = "" // アプリ内ののコードエディタ用(コードのテストで使用）
     public var jsonStringArray: [JSONString] = [] // アプリ内ののコードエディタ用
 
     public init(roomName: String = "") {
@@ -80,6 +81,7 @@ public class VoxelammingSwift: NSObject {
         isMetallic = 0
         roughness = 0.5
         isAllowedFloat = 0
+        name = "" // アプリ内ののコードエディタ用
 //        jsonStringArray = [] // アプリ内ののコードエディタ用（クリアしない）
     }
 
@@ -530,7 +532,7 @@ public class VoxelammingSwift: NSObject {
 
     // アプリ内ののコードエディタからデータ送信するときに使用する
     public func sendDataFromApp(name: String = "") {
-        if let jsonString = generateJSONString(name: name) {
+        if let jsonString = generateJSONString(nameString: name) {
             jsonStringArray.append(JSONString(string: jsonString, sleepSeconds: 0))
         }
     }
@@ -554,7 +556,7 @@ public class VoxelammingSwift: NSObject {
         try await ensureConnection()
 
         if let webSocketTask = webSocketTask,
-           let jsonString = generateJSONString(name: name) {
+           let jsonString = generateJSONString(nameString: name) {
             try await webSocketTask.send(.string(jsonString))
             print("Sent message: \(jsonString)")
         } else {
@@ -676,7 +678,8 @@ public class VoxelammingSwift: NSObject {
         ]
     }
     
-    private func generateJSONString(name: String) -> String? {
+    private func generateJSONString(nameString: String) -> String? {
+        name = nameString
         let date = Date()
         let dateFormatter = ISO8601DateFormatter()
         let dateString = dateFormatter.string(from: date)
