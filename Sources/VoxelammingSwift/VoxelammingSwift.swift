@@ -3,6 +3,11 @@
 
 import Foundation
 
+public struct JSONString {
+    var string: String
+    var sleepSeconds: Double
+}
+
 @available(iOS 15.0, macOS 12.0, *)
 public class VoxelammingSwift: NSObject {
     let url = URL(string: "wss://websocket.voxelamming.com")!
@@ -42,8 +47,9 @@ public class VoxelammingSwift: NSObject {
     public var isMetallic: Int = 0
     public var roughness: Double = 0.5
     public var isAllowedFloat: Int = 0
-    public var name: String = "" // アプリ内ののコードエディタ用
-    public var date: String = "" // アプリ内ののコードエディタ用
+//    public var name: String = "" // アプリ内ののコードエディタ用
+//    public var date: String = "" // アプリ内ののコードエディタ用
+    public var jsonStringArray: [JSONString] = [] // アプリ内ののコードエディタ用
 
     public init(roomName: String = "") {
         self.roomName = roomName
@@ -76,8 +82,9 @@ public class VoxelammingSwift: NSObject {
         isMetallic = 0
         roughness = 0.5
         isAllowedFloat = 0
-        name = ""
-        date = ""
+//        name = ""
+//        date = ""
+        jsonStringArray = []
     }
 
     public func setFrameFPS(_ fps: Int = 2) {
@@ -526,12 +533,17 @@ public class VoxelammingSwift: NSObject {
     }
 
     // アプリ内ののコードエディタからデータ送信するときに使用する
-    public func setDataName(name: String = "") {
-        let date = Date()
-        let dateFormatter = ISO8601DateFormatter()
-        let dateString = dateFormatter.string(from: date)
-        self.name = name
-        self.date = dateString
+    public func sendDataFromApp(name: String = "") {
+        if let jsonString = generateJSONString(name: name) {
+            jsonStringArray.append(JSONString(string: jsonString, sleepSeconds: 0))
+        }
+    }
+    
+    // アプリ内ののコードエディタからsleepSecondsする時に使用する
+    public func sleepSecondsFromApp(_ seconds: Double) async throws {
+        if !jsonStringArray.isEmpty {
+            jsonStringArray[jsonStringArray.count - 1].sleepSeconds = seconds
+        }
     }
     
     // sleep seconds function
@@ -545,42 +557,8 @@ public class VoxelammingSwift: NSObject {
     public func sendData(name: String = "") async throws {
         try await ensureConnection()
 
-        let date = Date()
-        let dateFormatter = ISO8601DateFormatter()
-        let dateString = dateFormatter.string(from: date)
-        let dataDict = [
-            "nodeTransform": nodeTransform,
-            "frameTransforms": frameTransforms,
-            "globalAnimation": globalAnimation,
-            "animation": animation,
-            "boxes": boxes,
-            "frames": frames,
-            "sentences": sentences,
-            "lights": lights,
-            "commands": commands,
-            "models": models,
-            "modelMoves": modelMoves,
-            "sprites": sprites,
-            "spriteMoves": spriteMoves,
-            "gameScore": gameScore,
-            "gameScreen": gameScreen,
-            "size": size,
-            "shape": shape,
-            "interval": buildInterval,
-            "isMetallic": isMetallic,
-            "roughness": roughness,
-            "isAllowedFloat": isAllowedFloat,
-            "name": name,
-            "date": dateString
-        ] as [String : Any]
-
-        let jsonData = try JSONSerialization.data(withJSONObject: dataDict, options: [])
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
-            print("Failed to convert data to string")
-            return
-        }
-
-        if let webSocketTask = webSocketTask {
+        if let webSocketTask = webSocketTask,
+           let jsonString = generateJSONString(name: name) {
             try await webSocketTask.send(.string(jsonString))
             print("Sent message: \(jsonString)")
         } else {
@@ -700,5 +678,50 @@ public class VoxelammingSwift: NSObject {
             [matrix[0][1], matrix[1][1], matrix[2][1]],
             [matrix[0][2], matrix[1][2], matrix[2][2]]
         ]
+    }
+    
+    private func generateJSONString(name: String) -> String? {
+        let date = Date()
+        let dateFormatter = ISO8601DateFormatter()
+        let dateString = dateFormatter.string(from: date)
+        
+        let dataDict: [String: Any] = [
+            "nodeTransform": nodeTransform,
+            "frameTransforms": frameTransforms,
+            "globalAnimation": globalAnimation,
+            "animation": animation,
+            "boxes": boxes,
+            "frames": frames,
+            "sentences": sentences,
+            "lights": lights,
+            "commands": commands,
+            "models": models,
+            "modelMoves": modelMoves,
+            "sprites": sprites,
+            "spriteMoves": spriteMoves,
+            "gameScore": gameScore,
+            "gameScreen": gameScreen,
+            "size": size,
+            "shape": shape,
+            "interval": buildInterval,
+            "isMetallic": isMetallic,
+            "roughness": roughness,
+            "isAllowedFloat": isAllowedFloat,
+            "name": name,
+            "date": dateString
+        ]
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dataDict, options: [])
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                return jsonString
+            } else {
+                print("Failed to convert data to string")
+                return nil
+            }
+        } catch {
+            print("JSON serialization failed: \(error.localizedDescription)")
+            return nil
+        }
     }
 }
