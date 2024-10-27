@@ -47,8 +47,6 @@ public class VoxelammingSwift: NSObject {
     public var isMetallic: Int = 0
     public var roughness: Double = 0.5
     public var isAllowedFloat: Int = 0
-//    public var name: String = "" // アプリ内ののコードエディタ用
-//    public var date: String = "" // アプリ内ののコードエディタ用
     public var jsonStringArray: [JSONString] = [] // アプリ内ののコードエディタ用
 
     public init(roomName: String = "") {
@@ -82,9 +80,7 @@ public class VoxelammingSwift: NSObject {
         isMetallic = 0
         roughness = 0.5
         isAllowedFloat = 0
-//        name = ""
-//        date = ""
-        jsonStringArray = []
+//        jsonStringArray = [] // アプリ内ののコードエディタ用（クリアしない）
     }
 
     public func setFrameFPS(_ fps: Int = 2) {
@@ -540,7 +536,7 @@ public class VoxelammingSwift: NSObject {
     }
     
     // アプリ内ののコードエディタからsleepSecondsする時に使用する
-    public func sleepSecondsFromApp(_ seconds: Double) async throws {
+    public func sleepSecondsFromApp(_ seconds: Double) {
         if !jsonStringArray.isEmpty {
             jsonStringArray[jsonStringArray.count - 1].sleepSeconds = seconds
         }
