@@ -4,8 +4,8 @@
 import Foundation
 
 public struct JSONString {
-    var string: String
-    var sleepSeconds: Double
+    public var string: String
+    public var sleepSeconds: Double
 }
 
 @available(iOS 15.0, macOS 12.0, *)
